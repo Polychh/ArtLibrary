@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 // MARK: - Artists
 struct ArtistArray: Decodable {
     let artists: [Artist]

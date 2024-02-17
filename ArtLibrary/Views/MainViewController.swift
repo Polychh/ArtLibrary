@@ -15,7 +15,7 @@ final class MainViewController: UIViewController {
     private let tableView = UITableView()
     private let searchController = UISearchController(searchResultsController: nil)
     private var filter: Bool = false
-    
+        
     init(viewModel: MainViewModel){
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -28,9 +28,26 @@ final class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configNavigationBar()
         configureTableView()
         setUpSearchController()
         setConstrains()
+    }
+    
+    @objc private func addAction() {
+        let addNewArtist = AddNewArtistVC()
+        addNewArtist.$textArray
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { aray in
+                if aray.count == 6{
+                    self.viewModel.newArtist = aray
+                }
+            })
+            .store(in: &cancellables)
+        addNewArtist.modalPresentationStyle = .overFullScreen
+        addNewArtist.modalTransitionStyle = .crossDissolve
+        self.present(addNewArtist, animated: true)
     }
     
 //MARK: - UPdate Artists
@@ -40,7 +57,6 @@ final class MainViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self = self else {return}
-                print("reload1")
                 tableView.reloadData()
             }
             .store(in: &cancellables)
@@ -51,12 +67,31 @@ final class MainViewController: UIViewController {
             .sink { [weak self] _ in
                 guard let self = self else {return}
                 guard let text = searchController.searchBar.text else {return}
-                print("reload")
                 if filter || text.isEmpty{
                    tableView.reloadData()
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.$addNewArtist
+            .dropFirst()
+            .receive(on: DispatchQueue.main)
+            .sink { newArtist in
+                let newIndexPath = IndexPath(row: 0, section: 0)
+                self.viewModel.artistArray.insert(newArtist, at: 0)
+                self.tableView.insertRows(at: [newIndexPath], with: .fade)
+            }
+            .store(in: &cancellables)
+    }
+}
+
+//MARK: - Configure UIBarButton
+private extension MainViewController{
+    func configNavigationBar(){
+        navigationItem.title = "ArtLibrary"
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addAction))
+        addButton.tintColor = .gray
+        navigationItem.rightBarButtonItem = addButton
     }
 }
 
@@ -83,7 +118,6 @@ private extension MainViewController{
         searchController.searchBar.placeholder = "Поиск"
         searchController.searchBar.searchTextField.backgroundColor = .white
         searchController.searchBar.tintColor = .gray
-        searchController.searchBar.searchTextField.font = UIFont.boldSystemFont(ofSize: 30)
         searchController.searchBar.searchTextField.layer.borderColor = UIColor.gray.cgColor
         searchController.searchBar.searchTextField.layer.borderWidth = 1.0
         searchController.searchBar.searchTextField.layer.cornerRadius = 15.0
@@ -92,8 +126,8 @@ private extension MainViewController{
         searchController.searchBar.searchTextField.layer.shadowOffset = CGSize(width: 0, height: 2)
         searchController.searchBar.searchTextField.layer.masksToBounds = true
         navigationItem.searchController = searchController
-        definesPresentationContext = false
-        navigationItem.hidesSearchBarWhenScrolling = true
+        searchController.definesPresentationContext = true
+        navigationItem.hidesSearchBarWhenScrolling = false
     }
 }
 //MARK: - SearchController
@@ -101,7 +135,7 @@ extension MainViewController: UISearchResultsUpdating, UISearchControllerDelegat
     func updateSearchResults(for searchController: UISearchController) {
         guard let text = searchController.searchBar.text else {return}
         filter = text.isEmpty ? false : true
-        viewModel.filterArtistArray = filter ? viewModel.artistArray.filter {$0.name.contains(text)} : []
+        viewModel.filterArtistArray = filter ? viewModel.artistArray.filter { $0.name.contains(text) || $0.works.contains { $0.title.contains(text) } } : []
     }
     
     func willPresentSearchController(_ searchController: UISearchController) {
@@ -123,7 +157,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource{
         guard let cell = tableView.dequeueReusableCell(withIdentifier: MainCell.resuseID, for: indexPath) as? MainCell else {return UITableViewCell()}
         cell.selectionStyle = .none
         let info = self.filter ? self.viewModel.filterArtistArray[indexPath.row] : self.viewModel.artistArray[indexPath.row]
-        cell.configArtistImage(image: UIImage(named: info.image)!)
+        cell.configArtistImage(image: UIImage(named: info.image))
         cell.configTitleLabel(titleLabelText: info.name)
         cell.configInfoLabel(infoLabelText: info.bio)
         return cell
@@ -146,7 +180,7 @@ private extension MainViewController{
         view.backgroundColor = .white
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 2),
             tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             tableView.leadingAnchor.constraint(equalTo: self.view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),

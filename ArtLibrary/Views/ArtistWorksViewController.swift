@@ -18,6 +18,7 @@ class ArtistWorksViewController: UIViewController {
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         return view
     }()
+    
     init(viewModel: ArtistWorksViewModel, cancellables: Set<AnyCancellable> = Set<AnyCancellable>()) {
         self.viewModel = viewModel
         self.cancellables = cancellables
@@ -42,7 +43,6 @@ class ArtistWorksViewController: UIViewController {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 guard let self = self else {return}
-                print("reloadCollection")
                 collectionView.reloadData()
             }
             .store(in: &cancellables)

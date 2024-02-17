@@ -32,8 +32,6 @@ final class MainCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setUpUIElements()
         setConstrains()
-       // configureShadow()
-       // setUpContentView()
     }
     
     required init?(coder: NSCoder) {
@@ -77,31 +75,7 @@ final class MainCell: UITableViewCell {
         titleLabel.text = nil
         infoLabel.text = nil
     }
-    
-    
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        //layer.shadowPath = UIBezierPath(roundedRect: bounds, cornerRadius: 20).cgPath
-  
-    }
-    
-//    private func setUpContentView(){
-//        contentView.layer.cornerRadius = 16
-//        contentView.layer.masksToBounds = true
-//        contentView.backgroundColor = .white
-//    }
-    
-//    private func configureShadow() {
-//        layer.shadowRadius = 4
-//        layer.shadowOffset = CGSize(width: 0, height: 2)
-//        layer.shadowOpacity = 0.4
-//        layer.shadowColor = UIColor.black.cgColor
-//        layer.cornerRadius = 20
-//        layer.masksToBounds = false
-//    }
 }
-
 
 //MARK: - Configure Cell UI
 extension MainCell{
@@ -113,8 +87,13 @@ extension MainCell{
         infoLabel.text = infoLabelText
     }
     
-    func configArtistImage(image: UIImage){
-        artistImage.image = image
+    func configArtistImage(image: UIImage?){
+        if let image = image{
+            artistImage.image = image
+        } else{
+            artistImage.image = UIImage(named: "defaultCategoryImage")
+        }
+        
     }
 }
 

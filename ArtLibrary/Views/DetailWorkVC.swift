@@ -29,7 +29,7 @@ final class DetailWorkVC: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     private lazy var workImage: UIImageView = {
         let image = UIImageView()
         image.layer.cornerRadius = 12
@@ -64,19 +64,49 @@ final class DetailWorkVC: UIViewController {
         configLabel(label: infoWork, sizeText: 18, weithText: .regular, lines: 0, color: .gray)
         setConstrains()
         addScrollViewZoom()
+        addDoubleTapZoom()
     }
     
     @objc private func dismissVC() {
         dismiss(animated: true)
-      }
-    
-    private func addScrollViewZoom(){
+    }
+    override func viewDidLayoutSubviews() {
+        scrollView.contentSize = workImage.frame.size
+    }
+}
+
+//MARK: - ConfigureScrollView
+private extension DetailWorkVC{
+    func addScrollViewZoom(){
         scrollView.delegate = self
-        scrollView.maximumZoomScale = 1
+        scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 4
         scrollView.setZoomScale(1, animated: true)
     }
-
+    
+    func addDoubleTapZoom(){
+        let tap = UITapGestureRecognizer(target: self, action: #selector(handleAction))
+        tap.numberOfTapsRequired = 2
+        scrollView.addGestureRecognizer(tap)
+    }
+    
+    @objc func handleAction(gesture: UITapGestureRecognizer){
+        if scrollView.zoomScale == 1{
+            scrollView.zoom(to: zoomImage(scale: scrollView.maximumZoomScale, center: gesture.location(in: gesture.view)), animated: true)
+        }else{
+            scrollView.setZoomScale(1, animated: true)
+        }
+    }
+    
+    func zoomImage(scale:CGFloat, center: CGPoint) -> CGRect{
+        var zoomRect = CGRect.zero
+        zoomRect.size.width = workImage.frame.size.width / scale
+        zoomRect.size.height = workImage.frame.size.height / scale
+        let centerNew = workImage.convert(center, to: scrollView)
+        zoomRect.origin.x = centerNew.x - (zoomRect.size.width) / 2.0
+        zoomRect.origin.y = centerNew.y - (zoomRect.size.height) / 2.0
+        return zoomRect
+    }
 }
 //MARK: - Configure UI
 extension DetailWorkVC{
@@ -101,22 +131,17 @@ extension DetailWorkVC{
 private extension DetailWorkVC{
     func setConstrains(){
         view.backgroundColor = .white
+        scrollView.backgroundColor = .red
         view.addSubview(scrollView)
         scrollView.addSubview(workImage)
         stackView.addArrangedSubview(workTitle)
         stackView.addArrangedSubview(infoWork)
-       // view.addSubview(workImage)
         view.addSubview(dismissButton)
         view.addSubview(stackView)
-
+        
         let pad: CGFloat = 16
-
+        
         NSLayoutConstraint.activate([
-            
-//            workImage.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
-//            workImage.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
-//            workImage.topAnchor.constraint(equalTo: scrollView.topAnchor),
-//            workImage.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             workImage.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor),
             workImage.centerYAnchor.constraint(equalTo: scrollView.centerYAnchor),
             workImage.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
@@ -126,12 +151,12 @@ private extension DetailWorkVC{
             dismissButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 12),
             dismissButton.widthAnchor.constraint(equalToConstant: 50),
             dismissButton.heightAnchor.constraint(equalToConstant: 50),
-
+            
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor,constant: -8),
             scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             scrollView.bottomAnchor.constraint(equalTo: stackView.topAnchor, constant: -8),
-
+            
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: pad),
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor , constant: -pad),
             stackView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor , constant:  -pad),
@@ -142,5 +167,11 @@ private extension DetailWorkVC{
 extension DetailWorkVC: UIScrollViewDelegate{
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return workImage
+    }
+    
+    func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+        if scale <  1.0 {
+            scrollView.setZoomScale(1, animated: true)
+        }
     }
 }
