@@ -24,6 +24,7 @@
 		36CD423B2B7BE1A9008304C2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 36CD423A2B7BE1A9008304C2 /* Assets.xcassets */; };
 		36CD423F2B7CB44A008304C2 /* AddNewArtistVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36CD423E2B7CB44A008304C2 /* AddNewArtistVC.swift */; };
 		36CD42452B7F6923008304C2 /* AddNewArtistViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36CD42442B7F6922008304C2 /* AddNewArtistViewModel.swift */; };
+		36E7A7212B94DD650073E6B4 /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36E7A7202B94DD650073E6B4 /* TestView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		36CD423A2B7BE1A9008304C2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../../../Downloads/Assets.xcassets; sourceTree = "<group>"; };
 		36CD423E2B7CB44A008304C2 /* AddNewArtistVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewArtistVC.swift; sourceTree = "<group>"; };
 		36CD42442B7F6922008304C2 /* AddNewArtistViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewArtistViewModel.swift; sourceTree = "<group>"; };
+		36E7A7202B94DD650073E6B4 /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				36CD42322B7BA5BB008304C2 /* ArtistWorksViewController.swift */,
 				36CD42382B7BBEC9008304C2 /* DetailWorkVC.swift */,
 				36CD423E2B7CB44A008304C2 /* AddNewArtistVC.swift */,
+				36E7A7202B94DD650073E6B4 /* TestView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -225,6 +228,7 @@
 				36CD42352B7BA762008304C2 /* ArtistWorksCell.swift in Sources */,
 				36CD42452B7F6923008304C2 /* AddNewArtistViewModel.swift in Sources */,
 				36CD42392B7BBEC9008304C2 /* DetailWorkVC.swift in Sources */,
+				36E7A7212B94DD650073E6B4 /* TestView.swift in Sources */,
 				36CD423F2B7CB44A008304C2 /* AddNewArtistVC.swift in Sources */,
 				36CD42332B7BA5BB008304C2 /* ArtistWorksViewController.swift in Sources */,
 				36CD422A2B7A6C09008304C2 /* MainCell.swift in Sources */,
